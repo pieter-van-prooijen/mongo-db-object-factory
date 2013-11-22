@@ -36,7 +36,7 @@ webapp or in the global context file ($CATALINA_BASE/conf/context.ml).
 The Mongo driver library and this factory class should be on the tomcat container
 classpath, by putting them in the $CATALINA_BASE/lib directory.
 
-The context.xml can have following form:
+The context.xml file can have following form:
 
     <?xml version='1.0' encoding='utf-8'?>
     <Context>
