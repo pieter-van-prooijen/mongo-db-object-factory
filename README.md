@@ -1,10 +1,10 @@
 # JNDI Mongo DB Object Factory
 
 This class allows for the specification of a Mongo DB object using the JNDI
-(Java Naming and Directory Interface) tree, as you would specify a in a
-similar manner to specifying a JDBC data source. This keeps the Mongo
-connection configuration (hostname, database etc.) out of the
-web application and moves it to the configuration of the application container.
+(Java Naming and Directory Interface) tree, the same place where you would
+configure a JDBC data source. This keeps the Mongo connection configuration
+(hostname, database etc.) out of the web application and moves it to the
+configuration of the application container.
 
 The code was inspired by
 [this stackoverflow sample](http://stackoverflow.com/questions/4076254/mongodb-via-jndi)
@@ -49,7 +49,7 @@ The context.xml can have following form:
 
 ## Retrieval Examples
 
-Retrieve the manufactured object using the following code:
+Retrieve the manufactured object above using the following code:
 
     DB db = (DB) InitialContext.doLookup("java:comp/env/mongo/commentsDB");
 
@@ -62,13 +62,13 @@ or when using the Spring J2EE lookup mechanism:
         http://www.springframework.org/schema/jee 
         http://www.springframework.org/schema/jee/spring-jee-3.0.xsd>
 
-        \<\!-- jndi-lookup prefixes the search with java:comp/env -->
+        <!-- jndi-lookup prefixes the search with java:comp/env -->
 	    <jee:jndi-lookup id="commentsDB" jndi-name="mongo/commentsDB" />
     </beans>
 
 The spring-data-mongo MongoTemplate class doesn't accept straight DB
 instances, but uses a MongoDbOFactory interface, so
-a very small wrapper is needed around the DB object to make suitable for
+a very small wrapper or shim is needed around the DB object to make suitable for
 use by this template:
 
     public class MongoDbFactoryWrapper implements MongoDbFactory {
@@ -91,7 +91,7 @@ use by this template:
     }
     }
 
-Initialize this wrapper in a straight forward manner in the Spring
+Instantiate this wrapper in a straight forward manner in the Spring
 configuration:
 
 	<jee:jndi-lookup id="commentsDB" jndi-name="mongo/commentsDB" />
@@ -105,11 +105,12 @@ configuration:
 
 ## Code
 
-The code uses some Java 7 constructs (like switching on a String). It logs
+The code uses some Java 7 constructs (like switching on Strings). It logs
 any configuration errors to slf4j. Note that some errors (like an unknown
 ReadPreference string) will throw IllegalArgument exceptions.
 
-For unit testing the Foursquare Fongo stub is used.
+For unit testing the Foursquare
+[Fongo](https://github.com/foursquare/fongo) in-memory Mongo stub is used.
 
 ## Licence
 
