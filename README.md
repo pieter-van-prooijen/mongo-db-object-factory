@@ -33,9 +33,6 @@ The object factory understands the following properties:
 Use this factory in Tomcat by adding this resource in the context.xml of a
 webapp or in the global context file ($CATALINA_BASE/conf/context.ml).
 
-The Mongo driver library and this factory class should be on the tomcat container
-classpath, by putting them in the $CATALINA_BASE/lib directory.
-
 The context.xml file can have following form:
 
     <?xml version='1.0' encoding='utf-8'?>
@@ -46,6 +43,12 @@ The context.xml file can have following form:
           username="a-user" password="some-password"
           />
     </Context>
+
+Note that this resource is instantiated on the first lookup (not at tomcat
+start up), using the class loader of the calling webapp. So this webapp
+should contain the factory class and the mongo java driver. Alternatively,
+you can put them on the shared tomcat classpath, for sharing between
+different web applications.
 
 ## Retrieval Examples
 
