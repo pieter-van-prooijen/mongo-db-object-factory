@@ -120,6 +120,10 @@ ReadPreference string) will throw IllegalArgument exceptions.
 For unit testing the Foursquare
 [Fongo](https://github.com/foursquare/fongo) in-memory Mongo stub is used.
 
+Travis-ci status:
+![travis-ci status](https://travis-ci.org/pieter-van-prooijen/mongo-db-object-factory.png)
+
+
 ## Licence
 
 Copyright © 2013 Pieter van Prooijen
