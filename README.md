@@ -52,8 +52,8 @@ applications. This behaviour is different from tomcat jdbc (connection
 pool) resources which are instantiated when the container starts up and
 which use the tomcat shared class loader.
 
-The factory uses the slf4j logging library, so this too should be on the
-webapp's or tomcat's classpath.
+The factory uses the slf4j logging library, so an appropriate adapter (e.g.
+slf4j-log4j12) should be on the webapp's or tomcat's classpath.
 
 ## Retrieval Examples
 
