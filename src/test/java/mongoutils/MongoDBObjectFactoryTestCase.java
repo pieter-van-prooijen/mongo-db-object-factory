@@ -79,7 +79,7 @@ public class MongoDBObjectFactoryTestCase {
         when(writeConcern.getType()).thenReturn(MongoDBObjectFactory.PROPERTY_WRITE_CONCERN);
         when(writeConcern.getContent()).thenReturn("Unknown write concern");
 
-        List<RefAddr> properties = new LinkedList<RefAddr>();
+        List<RefAddr> properties = new LinkedList<>();
         properties.add(writeConcern);
 
         Reference reference = mock(Reference.class);
@@ -136,7 +136,7 @@ public class MongoDBObjectFactoryTestCase {
         when(readPreference.getType()).thenReturn(MongoDBObjectFactory.PROPERTY_READ_PREFERENCE);
         when(readPreference.getContent()).thenReturn("NEAREST");
 
-        List<RefAddr> properties = new LinkedList<RefAddr>();
+        List<RefAddr> properties = new LinkedList<>();
         properties.add(address);
         properties.add(database);
         properties.add(userName);
@@ -172,7 +172,7 @@ public class MongoDBObjectFactoryTestCase {
         when(database.getType()).thenReturn(MongoDBObjectFactory.PROPERTY_DATABASE);
         when(database.getContent()).thenReturn("some_db");
 
-        List<RefAddr> properties = new LinkedList<RefAddr>();
+        List<RefAddr> properties = new LinkedList<>();
         properties.add(seed);
         properties.add(database);
         Reference reference = mock(Reference.class);
@@ -194,7 +194,7 @@ public class MongoDBObjectFactoryTestCase {
         when(address.getType()).thenReturn(MongoDBObjectFactory.PROPERTY_ADDRESS);
         when(address.getContent()).thenReturn("127.0.0.1");
 
-        List<RefAddr> properties = new LinkedList<RefAddr>();
+        List<RefAddr> properties = new LinkedList<>();
         properties.add(address);
 
         Reference reference = mock(Reference.class);
@@ -202,5 +202,13 @@ public class MongoDBObjectFactoryTestCase {
 
         DB db = (DB) factory.getObjectInstance(reference, null, null, null);
         assertNull(db);
+    }
+    
+    @Test
+    public void testIsBlank() {
+        MongoDBObjectFactory f = new MongoDBObjectFactory();
+        assertTrue(f.isBlank(null));
+        assertTrue(f.isBlank(""));
+        assertTrue(f.isBlank("  "));
     }
 }

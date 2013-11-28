@@ -44,11 +44,16 @@ The context.xml file can have following form:
           />
     </Context>
 
-Note that this resource is instantiated on the first lookup (not at tomcat
-start up), using the class loader of the calling webapp. So this webapp
-should contain the factory class and the mongo java driver. Alternatively,
-you can put them on the shared tomcat classpath, for sharing between
-different web applications.
+Note that this resource is instantiated on the first lookup, using the
+class loader of the calling webapp. So this webapp should contain the
+factory class and the mongo java driver. Alternatively, you can put them on
+the shared tomcat classpath, for sharing between different web
+applications. This behaviour is different from tomcat jdbc (connection
+pool) resources which are instantiated when the container starts up and
+which use the tomcat shared class loader.
+
+The factory uses the slf4j logging library, so this too should be on the
+webapp's or tomcat's classpath.
 
 ## Retrieval Examples
 
@@ -97,7 +102,7 @@ use by this template:
 Instantiate this wrapper in a straight forward manner in the Spring
 configuration:
 
-	<jee:jndi-lookup id="commentsDB" jndi-name="mongo/commentsDB" />
+    <jee:jndi-lookup id="commentsDB" jndi-name="mongo/commentsDB" />
 
     <bean id="commentsMongoDbFactory" class="nl.rijksoverheid.platform.comments.common.service.springdata.MongoDbFactoryWrapper">
         <constructor-arg ref="commentsDB" />

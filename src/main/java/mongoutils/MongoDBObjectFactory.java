@@ -5,6 +5,8 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.naming.Context;
 import javax.naming.Name;
@@ -12,7 +14,6 @@ import javax.naming.RefAddr;
 import javax.naming.Reference;
 import javax.naming.spi.ObjectFactory;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,9 +52,10 @@ public class MongoDBObjectFactory implements ObjectFactory {
 
     // read preference: use one of the constants defined in ReadPreference class.
     public static final String PROPERTY_READ_PREFERENCE = "readPreference";
+    private static final Pattern PAT_BLANK = Pattern.compile("^\\s*$");
 
     private String address = null;
-    private List<ServerAddress> seeds = new LinkedList<ServerAddress>();
+    private List<ServerAddress> seeds = new LinkedList<>();
     private String database = null;
     private String userName = null;
     private char[] password = new char[0];
@@ -61,6 +63,7 @@ public class MongoDBObjectFactory implements ObjectFactory {
     private ReadPreference readPreference = null;
 
     @Override
+    @SuppressWarnings({"PMD.SignatureDeclareThrowsException", "PMD.ReplaceHashtableWithMap" })
     public Object getObjectInstance(final Object obj, final Name name, final Context nameCtx,
             final Hashtable<?, ?> environment) throws Exception {
 
@@ -115,11 +118,11 @@ public class MongoDBObjectFactory implements ObjectFactory {
     }
 
     private boolean validate() {
-        if (StringUtils.isBlank(address) && seeds.isEmpty()) {
+        if (isBlank(address) && seeds.isEmpty()) {
             LOG.error("Either an address or a seeds property is required");
             return false;
         }
-        if (StringUtils.isBlank(database)) {
+        if (isBlank(database)) {
             LOG.error("A database property is required");
             return false;
         }
@@ -130,12 +133,12 @@ public class MongoDBObjectFactory implements ObjectFactory {
         if (validate()) {
             DB db;
 
-            List<MongoCredential> credentials = new LinkedList<MongoCredential>();
-            if (StringUtils.isNotBlank(userName)) {
+            List<MongoCredential> credentials = new LinkedList<>();
+            if (isNotBlank(userName)) {
                 MongoCredential credential = MongoCredential.createMongoCRCredential(userName, database, password);
                 credentials.add(credential);
             }
-            if (StringUtils.isNotBlank(address)) {
+            if (isNotBlank(address)) {
                 db = createDB(address, database, credentials);
             } else {
                 db = createDB(seeds, database, credentials);
@@ -173,13 +176,28 @@ public class MongoDBObjectFactory implements ObjectFactory {
     }
 
     public void setSeeds(final String seedsArg) throws UnknownHostException {
-        String[] seedValues = StringUtils.split(seedsArg, ", ");
+        if (isNotBlank(seedsArg)) {
+            String[] seedValues = seedsArg.split("[,\\s]+");
         for (String seedValue : seedValues) {
             seeds.add(new ServerAddress(seedValue));
+            }
         }
     }
 
     public List<ServerAddress> getSeeds() {
         return seeds;
+    }
+    
+    // Remove dependency on commons-lang
+    public boolean isBlank(final String s) {
+        if (s == null) {
+            return true;
+        }
+        Matcher m = PAT_BLANK.matcher(s);
+        return m.matches();
+    }
+    
+    public boolean isNotBlank(final String s) {
+        return !isBlank(s);
     }
 }
